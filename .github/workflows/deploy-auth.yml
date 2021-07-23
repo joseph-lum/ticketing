@@ -18,3 +18,8 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       - run: docker push josephlum/auth
+      - uses: digitalocean/action-doctl@v2  # Installing doctl (by DigitalOcean) into container
+        with:
+          token: $ {{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - run: doctl kubernetes cluster kubeconfig save ticketing
+      - run: kubectl rollout restart deployment auth-depl   # Restart deployment to use the latest docker image
