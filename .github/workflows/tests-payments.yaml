@@ -1,7 +1,9 @@
 name: tests-payments
 
 on:
-  pull_request
+  pull_request:
+    paths:
+      - 'payments/**' # Only run jobs when files in path change
   
 jobs:
   build:  # To startup and run a container in a VM
