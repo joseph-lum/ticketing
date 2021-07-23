@@ -1,0 +1,60 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+deploy: # List out all the config files we want to load into cluster
+  kubectl:
+    manifests:
+      - ./infra/k8s/*
+build:
+  local:
+    push: false # Whenever we build an image, do not push to docker hub
+  # googleCloudBuild:
+    # projectId: projectId
+  artifacts:
+    - image: josephlum/auth # docker image name in gcr
+      context: auth
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual: # Be explicit about what to do when any of the files in the context change
+          - src: 'src/**/*.ts'
+            dest: .   # Corresponding path
+    - image: josephlum/ticketing-client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '**/*.js'
+            dest: .
+    - image: josephlum/tickets
+      context: tickets
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    - image: josephlum/orders
+      context: orders
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    - image: josephlum/expiration
+      context: expiration
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+    - image: josephlum/payments
+      context: payments
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .

@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth
+  template:   # Template to create each individual pod that our Deployment is going to manage
+    metadata: 
+      labels:
+        app: auth
+    spec: 
+      containers:
+        - name: auth  # Only for logging purposes
+          image: josephlum/auth
+          env: 
+            - name: MONGO_URI
+              value: 'mongodb://auth-mongo-srv:27017/auth'
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef: 
+                  name: jwt-secret
+                  key: JWT_KEY
+            # Needs to create kubernetes secret by running: kubectl create secret generic jwt-secret --from-literal=JWT_KEY=asdf
+---
+apiVersion: v1
+kind: Service   # type is ClusterIP if not defined
+metadata:
+  name: auth-srv
+spec: 
+  selector:
+    app: auth
+  ports:
+    - name: auth
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
