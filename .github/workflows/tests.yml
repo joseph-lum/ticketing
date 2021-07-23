@@ -1,0 +1,11 @@
+name: tests
+
+on:
+  pull_request
+  
+jobs:
+  build:  # To startup and run a container in a VM
+    runs-on: ubuntu-latest  # Runs on the latest version of ubuntu
+    steps:
+      - uses: actions/checkout@v2   # Take all the code out of our project
+      - run: cd auth && npm install && npm run test:ci  # Run commands
